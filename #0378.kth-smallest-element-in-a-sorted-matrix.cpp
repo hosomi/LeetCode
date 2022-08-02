@@ -1,27 +1,19 @@
 class Solution {
-    public:
-        int kthSmallest(vector<vector<int>>& matrix, int k) {
+public:
+    int kthSmallest(vector<vector<int>>& matrix, int k) {
 
-            int size = matrix.size();
-            int low = matrix[0][0];
-            int high = matrix[size -1][size - 1];
-
-            while (low < high) {
-                int mid = (low + high) / 2;
-                int index = 0;
-                int j;
-
-                for (int i = 0; i < size; i++) {
-                    j = upper_bound(matrix[i].begin(), matrix[i].end(), mid) - matrix[i].begin();
-                    index += j;
-                }
-
-                if (index < k) {
-                    low = mid +1;
-                } else if (index >= k)  {
-                    high = mid;
+        int rowSize = matrix.size();
+        int colSize = matrix[0].size();
+        priority_queue<int, vector<int>, less<int>> pq;
+        for (int i = 0; i < rowSize; i++) {
+            for (int j = 0; j < colSize; j++) {
+                pq.push(matrix[i][j]);
+                if (pq.size() > k) {
+                    cout << "pop: " << pq.top() << endl;
+                    pq.pop();
                 }
             }
-            return low;
+        }
+        return pq.top();
     }
 };
