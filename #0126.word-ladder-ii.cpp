@@ -2,93 +2,78 @@ class Solution {
 public:
     vector<vector<string>> findLadders(string beginWord, string endWord, vector<string>& wordList) {
 
-        unordered_set<string> words(wordList.begin(), wordList.end());
-        unordered_map<string, unordered_set<string>> graph;
-        if (words.find(endWord) == words.end()) {
-            return vector<vector<string>>();
+        for (string node : wordList) {
+            dist[node] = INT_MAX;
+            parent[node] = {};
         }
 
-        bool foundEnd = false;
-        queue<string> q1, q2;
-        unordered_set<string> visited1, visited2;
-        queue<string> qnext;
-        bool reversed = false;
-        q1.push(beginWord);
-        q2.push(endWord);
-        visited1.insert(beginWord);
-        visited2.insert(endWord);
-        while (!q1.empty() && !q2.empty() && !foundEnd) {
-            if (q1.size() < q2.size()) {
-                foundEnd = visitLevel(words, graph, q1, visited1, visited2, false);
-            } else {
-                foundEnd = visitLevel(words, graph, q2, visited2, visited1, true);
+        parent[beginWord] = { "root" };
+        queue<string> q;
+        dist[beginWord] = 1;
+        q.push(beginWord);
+        while (!q.empty()) {
+            string par = q.front();
+            q.pop();
+            if (par == endWord) {
+                break;
             }
-        }
 
-        vector<string> path = {beginWord};
-        vector<vector<string>> paths;
-        backtrack(beginWord, endWord, graph, path, paths);
-        return paths;
-    }
+            int size = par.size();
+            for(int i = 0; i < size; i++) {
+                string pref = "" , suff = "";
+                if (i) {
+                    pref = par.substr(0,i);
+                }
 
-private:
-    void backtrack(string cur, string& endWord, unordered_map<string, unordered_set<string>>& graph,
-        vector<string>& path, vector<vector<string>>& paths) {
-
-        if (cur == endWord) {
-            paths.push_back(path);
-        } else {
-            for (const string& nei : graph[cur]) {
-                path.push_back(nei);
-                backtrack(nei, endWord, graph, path, paths);
-                path.pop_back();
-            }
-        }
-    };
-    
-    bool visitLevel(unordered_set<string>& words, unordered_map<string, unordered_set<string>>& graph,
-                      queue<string>& q, unordered_set<string>& visited, unordered_set<string>& visited_other, bool reversed) {
-
-        int levelSize = q.size();
-        bool foundEnd = false;
-        unordered_set<string> visiting;
-        string cur;
-        string nei;
-        char oldC;
-        while (levelSize-- > 0) {
-            cur = q.front(); q.pop();
-            nei = cur;
-            for (int i = 0; i < cur.size(); ++i) {
-                oldC = nei[i];
-                for (char c = 'a'; c <= 'z'; ++c) {
-                    if (c == oldC) {
-                        continue;
-                    }
-                    nei[i] = c;
-
-                    if (words.find(nei) != words.end()) {
-                        if (visited_other.find(nei) != visited_other.end()) {
-                            foundEnd = true;
-                        }
-
-                        if (visited.find(nei) == visited.end()) {
-                            visiting.insert(nei);
-                            q.push(nei);
-
-                            if (!reversed) {
-                                graph[cur].insert(nei);
-                            } else {
-                                graph[nei].insert(cur);
+                if (i < size - 1) {
+                    suff = par.substr(i + 1);
+                }
+                
+                string child = pref + '$'+suff;
+                int pos = pref.size();
+                for (char c = 'a'; c <= 'z'; c++) {
+                    if (c != par[i]) {
+                        child[pos] = c;
+                        if (dist.count(child)) {
+                            if (dist[child] > 1 + dist[par]) {
+                                dist[child] =  1 + dist[par];
+                                parent[child].clear();
+                                parent[child].push_back(par);
+                                q.push(child);
+                            } else if(dist[child] == 1 + dist[par]) {
+                                parent[child].push_back(par);
                             }
                         }
                     }
-
                 }
-                nei[i] = oldC;
             }
         }
 
-        visited.insert(visiting.begin(), visiting.end());
-        return foundEnd;
-    };
+        vector<string> path;
+        pathfinder(endWord, path);
+        int size = result.size();
+        for (int i=0; i < size; i++) {
+             std::reverse(result[i].begin(), result[i].end());
+        }
+        return result;
+    }
+
+private:
+    map<string,vector<string>> parent;
+    unordered_map<string,int> dist;
+    vector<vector<string>> result;
+
+    void pathfinder(string par,vector<string>&path) {
+
+        if (par == "root") {
+            result.push_back(path); 
+            return;
+        }
+
+        for (string node : parent[par]) {
+            path.push_back(par);
+            pathfinder(node,path);
+            path.pop_back();
+        }
+    }
 };
