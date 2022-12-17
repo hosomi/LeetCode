@@ -5,8 +5,8 @@ public:
         stack<int> st;
         for (auto &t : tokens) {
             if (t == "+" || t == "-" || t == "*" || t == "/") {
-                int first = st.top(); st.pop();
-                int second = st.top(); st.pop();
+                long long first = st.top(); st.pop();
+                long long second = st.top(); st.pop();
                 if (t == "+") {
                     st.push(first + second);
                 } else if (t == "-") {
