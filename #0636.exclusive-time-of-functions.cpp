@@ -30,24 +30,24 @@ public:
     }
 
 private:
-  void exclusiveTime(string &s, int &id, int &time, bool &flag) {
+    void exclusiveTime(string &s, int &id, int &time, bool &flag) {
 
-    id = time = 0;
-    int i = 0;
-    for (; s[i] != ':'; i++) {
-        id = id * 10 + (s[i] - '0');
-    }
+        id = time = 0;
+        int i = 0;
+        for (; s[i] != ':'; i++) {
+            id = id * 10 + (s[i] - '0');
+        }
 
-    if (s[++i] == 's') {
-        flag = true;
-        i += 6;
-    } else {
-        flag = false;
-        i += 4;
-    }
+        if (s[++i] == 's') {
+            flag = true;
+            i += 6;
+        } else {
+            flag = false;
+            i += 4;
+        }
 
-    for (; i != s.size(); i++) {
-        time = time * 10 + (s[i] - '0');
+        for (; i != s.size(); i++) {
+            time = time * 10 + (s[i] - '0');
+        }
     }
-  }
 };
