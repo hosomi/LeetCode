@@ -1,5 +1,5 @@
 class Solution {
-public:
+public: 
     bool lemonadeChange(vector<int>& bills) {
 
         int five = 0;
