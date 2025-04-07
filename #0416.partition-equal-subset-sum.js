@@ -14,7 +14,7 @@ var canPartition = function(nums) {
     for (let i = nums.length - 1; i >= 0; i--) {
         const nextSums = new Set()
         for (const sum of everySum) {
-			if (nums[i] + sum == target) {
+            if (nums[i] + sum == target) {
                 return true;
             }
             nextSums.add(sum);
